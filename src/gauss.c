@@ -1,21 +1,40 @@
 #include "gauss.h"
+#include <math.h>
 
-/**
- *  * Zwraca 0 - elimnacja zakonczona sukcesem
- *   * Zwraca 1 - macierz osobliwa - dzielenie przez 0
- *    */
 int eliminate(Matrix *mat, Matrix *b){
-	int n = mat->r;
-	int c, r, i;
-	for( c = 0; c < n - 1; c++){
-		for( r = c+1; r < n; r++){
-			if( mat->data[c][c] == 0 )
-				return 1;
-			double m = mat->data[r][c] / mat->data[c][c];																					
-			for( i = c; i < n; i++ )
-				mat->data[r][i] -= m * mat->data[c][i];
-			b->data[r][0] -= m * b->data[c][0];
+
+	int il = mat->r;
+
+	for(int n = 0; n < il - 1; n++){
+		int nmax = n;
+
+		for(int r = n+1; r < il; r++)
+			if(fabs(mat-> dane[r][n]) > fabs(mat-> dane[nmax][n]) ){
+				nmax = r;
+			}
+
+		if( nmax != n){
+			double btmp = b-> dane[n][0];
+			double *tmp = mat-> dane[n];
+			b-> dane[n][0] = b-> dane[nmax][0];
+			mat-> dane[n] = mat-> dane[nmax];
+			b-> dane[nmax][0] = btmp;
+			mat-> dane[nmax] = tmp;
 		}
+		
+		for(int r = n+1; r < il; r++){ 
+
+			if(mat-> dane[n][n]==0){
+				return 1;
+			}
+
+			double m = mat-> dane[r][n] / mat-> dane[n][n];	
+											
+			for(int i = n; i < il; i++ ){
+				mat-> dane[r][i] -= m * mat-> dane[n][i];
+			}
+			b-> dane[r][0] -= m * b-> dane[n][0];
+		}	
 	}
 	return 0;
 }
